@@ -18,13 +18,20 @@ const Converter = () => {
         const to = rightCurrency.toUpperCase();
 
         const res = await fetch(
-          `https://api.exchangerate.host/live?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&currencies=${to}&source=${from}`
+          `https://api.exchangerate.host/convert?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&from=${from}&to=${to}&amount=1`
         );
         const data = await res.json();
-        const key = from + to;
-        const r = data?.quotes?.[key] ?? null; //copied this to handle any missing data
-        setRate(r);
-        console.log("rate:", r, "key:", key);
+
+        if (data.success) {
+          setRate(data.result);
+        }
+
+        // const r = data?.result ?? null;
+        // console.log("data", data);
+        // console.log("data.result", data.result);
+        // setRate(r);
+        console.log("rate:", data.result, "from:", from, "to", to);
+        // console.log("the new rate set is:", rate);
       } catch (err) {
         console.error("Error fetching:", err);
         setRate(null);
@@ -144,7 +151,11 @@ const Converter = () => {
             />
           </div>
 
-          <p>$1USD = 1.291SGD</p>
+          <p>
+            1 {rightCurrency.toUpperCase()} ={" "}
+            {rate && rate !== 0 ? (1 / rate).toFixed(4) : "..."}{" "}
+            {leftCurrency.toUpperCase()}
+          </p>
         </div>
       </div>
     </>
