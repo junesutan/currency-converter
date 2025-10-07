@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-const DUMMY_EXCHANGE_RATE = 0.7742;
+// const DUMMY_EXCHANGE_RATE = 0.7742;
 
 const Converter = () => {
   const [leftCurrency, setLeftCurrency] = useState("sgd");
   const [rightCurrency, setRightCurrency] = useState("usd");
   const [leftValue, setLeftValue] = useState("1.00");
   const [rightValue, setRightValue] = useState("");
+  const [rate, setRate] = useState(null);
+
+  //FETCH DATA USING EXCHANGE RATE API
+
+  useEffect(() => {
+    async function fetchRate() {
+      try {
+        const from = leftCurrency.toUpperCase();
+        const to = rightCurrency.toUpperCase();
+
+        const res = await fetch(
+          `https://api.exchangerate.host/live?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&currencies=${to}&source=${from}`
+        );
+        const data = await res.json();
+        const key = from + to;
+        const r = data?.quotes?.[key] ?? null; //copied this to handle any missing data
+        setRate(r);
+        console.log("rate:", r, "key:", key);
+      } catch (err) {
+        console.error("Error fetching:", err);
+        setRate(null);
+      }
+    }
+    fetchRate();
+  }, [leftCurrency, rightCurrency]);
+
+  //   const res = await fetch(
+  //   "https://api.exchangerate.host/live?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&currencies=USD,EUR&source=SGD"
+  // );
+  //   const exchangeRateData = await res.json();
+  //   console.log(exchangeRateData);
+  //   useEffect(() => )
 
   //   const handleChange = (event) => {
   //     setBaseValue(event.target.value);
@@ -18,7 +50,7 @@ const Converter = () => {
     setLeftValue(v);
     console.log(`the user input ${e.target.value} ${leftCurrency}`);
     if (v !== "") {
-      const value = parseFloat(v) * DUMMY_EXCHANGE_RATE;
+      const value = parseFloat(v) * rate;
       setRightValue(value.toFixed(5)); // show 5 decimals ? ?? ?
       console.log(
         `the right value is calculated to be: ${value} ${rightCurrency}`
@@ -34,7 +66,7 @@ const Converter = () => {
     setRightValue(v);
     console.log(`the user input ${e.target.value} ${rightCurrency}`);
     if (v !== "") {
-      const value = parseFloat(v) * DUMMY_EXCHANGE_RATE;
+      const value = parseFloat(v) * rate;
       setLeftValue(value.toFixed(5)); // show 5 decimals ? ?? ?
       console.log(
         `the left value is calculated to be: ${value} ${rightCurrency}`
@@ -77,7 +109,10 @@ const Converter = () => {
             />
           </div>
 
-          <p>S$1 = 0.7742USD</p>
+          <p>
+            1 {leftCurrency.toUpperCase()} = {rate ? rate.toFixed(4) : "..."}{" "}
+            {rightCurrency.toUpperCase()}
+          </p>
         </div>
 
         {/* SWAP BUTTON */}
