@@ -8,6 +8,15 @@
   z-index: 1000;
 }
 
+.navbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  color: blue;
+}
+
 .main-content {
   margin-top: 80px;
 }
@@ -16,6 +25,7 @@
   display: flex;
   gap: 20px;
   list-style: none;
+  color: white;
 }
 
 #root {
