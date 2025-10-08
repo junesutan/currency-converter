@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+const APIKEY = import.meta.env.VITE_API_KEY;
 // import ExchangeRateTrend from "./components/ExchangeRateTrend";
 // const DUMMY_EXCHANGE_RATE = 0.7742;
 
@@ -16,7 +17,7 @@ const Converter = () => {
     const timeoutId = setTimeout(async () => {
       try {
         const res = await fetch(
-          `https://api.exchangerate.host/convert?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&from=${leftCurrency}&to=${rightCurrency}&amount=1`
+          `https://api.exchangerate.host/convert?access_key=${APIKEY}from=${leftCurrency}&to=${rightCurrency}&amount=1`
         );
         const data = await res.json();
         if (data.success) {
@@ -48,7 +49,7 @@ const Converter = () => {
   }, [leftCurrency, rightCurrency]);
 
   //   const res = await fetch(
-  //   "https://api.exchangerate.host/live?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&currencies=USD,EUR&source=SGD"
+  //   "https://api.exchangerate.host/live?access_key=${APIKEY}&currencies=USD,EUR&source=SGD"
   // );
   //   const exchangeRateData = await res.json();
   //   console.log(exchangeRateData);

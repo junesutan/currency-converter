@@ -1,4 +1,5 @@
-"use client";
+const APIKEY = import.meta.env.VITE_API_KEY;
+("use client");
 import React, { useState, useEffect } from "react";
 import { mockHistoricalData } from "./mockHistoricalData";
 import {
@@ -24,7 +25,7 @@ function MyComponent() {
         //fetch historical data from API
 
         // const res = await fetch(
-        //   "https://api.exchangerate.host/timeframe?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&source=usd&currencies=sgd&start_date=2025-09-06&end_date=2025-10-06"
+        //   "https://api.exchangerate.host/timeframe?access_key=${APIKEY}&source=usd&currencies=sgd&start_date=2025-09-06&end_date=2025-10-06"
         // );
         // const json = await res.json();
 
