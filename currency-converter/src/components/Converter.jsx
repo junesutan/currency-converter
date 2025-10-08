@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+// import ExchangeRateTrend from "./components/ExchangeRateTrend";
 // const DUMMY_EXCHANGE_RATE = 0.7742;
 
 const Converter = () => {
@@ -12,32 +13,38 @@ const Converter = () => {
   //FETCH DATA USING EXCHANGE RATE API
 
   useEffect(() => {
-    async function fetchRate() {
+    const timeoutId = setTimeout(async () => {
       try {
-        const from = leftCurrency.toUpperCase();
-        const to = rightCurrency.toUpperCase();
-
         const res = await fetch(
-          `https://api.exchangerate.host/convert?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&from=${from}&to=${to}&amount=1`
+          `https://api.exchangerate.host/convert?access_key=69a1450bbd5e613bb343e5f0ed3d6bfb&from=${leftCurrency}&to=${rightCurrency}&amount=1`
         );
         const data = await res.json();
-
         if (data.success) {
+          console.log(data);
           setRate(data.result);
+          setRightValue((parseFloat(leftValue) * data.result).toFixed(4));
         }
 
         // const r = data?.result ?? null;
         // console.log("data", data);
         // console.log("data.result", data.result);
         // setRate(r);
-        console.log("rate:", data.result, "from:", from, "to", to);
+        console.log(
+          "rate:",
+          data.result,
+          "from:",
+          leftCurrency,
+          "to",
+          rightCurrency
+        );
         // console.log("the new rate set is:", rate);
       } catch (err) {
         console.error("Error fetching:", err);
         setRate(null);
       }
-    }
-    fetchRate();
+    }, 800); // ⏳ only fetch 800 ms after last change
+
+    return () => clearTimeout(timeoutId); // 🧹 clean up on rerender
   }, [leftCurrency, rightCurrency]);
 
   //   const res = await fetch(
@@ -158,6 +165,7 @@ const Converter = () => {
           </p>
         </div>
       </div>
+      {/* <ExchangeRateTrend /> */}
     </>
   );
 };
