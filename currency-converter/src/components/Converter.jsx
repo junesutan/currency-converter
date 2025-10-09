@@ -1,35 +1,48 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 const APIKEY = import.meta.env.VITE_API_KEY;
 
 const Converter = ({ onSavePair }) => {
-  const [leftCurrency, setLeftCurrency] = useState("sgd");
+  //receives a prop pass from App.jsx to save pairs
+
+  const [leftCurrency, setLeftCurrency] = useState("sgd"); //tracks currency
   const [rightCurrency, setRightCurrency] = useState("usd");
-  const [leftValue, setLeftValue] = useState("1.00");
+
+  const [leftValue, setLeftValue] = useState("1.00"); //tracks amount
   const [rightValue, setRightValue] = useState("");
-  const [rate, setRate] = useState(null);
-  const [message, setMessage] = useState("");
+
+  const [rate, setRate] = useState(null); //store exchange rate fetched from API
+  const [message, setMessage] = useState(""); //feedback message to user
 
   //HANDLE FAV PAIRS
   const handleSave = () => {
     if (!rate || isNaN(rate)) {
+      //check if exchange rate is falsy (false, 0, "", null, undefined) before saving
       setMessage("Cannot save — exchange rate is not ready yet!");
       setTimeout(() => setMessage(""), 2500);
       return;
     }
 
-    if (!leftValue || parseFloat(leftValue) === 0) {
+    if (
+      !leftValue ||
+      parseFloat(leftValue) === 0 ||
+      !rightValue ||
+      parseFloat(rightValue) === 0
+    ) {
       setMessage("Please enter a value before saving!");
       setTimeout(() => setMessage(""), 2500);
       return;
     }
 
-    const now = new Date();
+    const now = new Date(); // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
     const formattedDate = now.toLocaleString("en-SG", {
       dateStyle: "medium",
       timeStyle: "short",
     });
 
     onSavePair({
+      //calling the function which is passed down from parent, passes the object up to the parent
+      //info sent up to parent, parent write it down
       from: leftCurrency,
       to: rightCurrency,
       rate,
@@ -37,12 +50,12 @@ const Converter = ({ onSavePair }) => {
     });
 
     setMessage(
-      `✅ Saved ${leftCurrency.toUpperCase()} → ${rightCurrency.toUpperCase()}`
+      `Saved ${leftCurrency.toUpperCase()} → ${rightCurrency.toUpperCase()}`
     );
     setTimeout(() => setMessage(""), 2500);
   };
 
-  //HANDLE SWAP
+  //FUNCTION TO HANDLE SWAP
   const handleSwap = () => {
     setLeftCurrency(rightCurrency);
     setRightCurrency(leftCurrency);
@@ -51,7 +64,6 @@ const Converter = ({ onSavePair }) => {
   };
 
   //FETCH DATA USING EXCHANGE RATE API
-
   useEffect(() => {
     console.log(APIKEY);
     const timeoutId = setTimeout(async () => {
@@ -69,10 +81,6 @@ const Converter = ({ onSavePair }) => {
           setRightValue((parseFloat(leftValue) * data.result).toFixed(4));
         }
 
-        // const r = data?.result ?? null;
-        // console.log("data", data);
-        // console.log("data.result", data.result);
-        // setRate(r);
         console.log(
           "rate:",
           data.result,
@@ -86,7 +94,7 @@ const Converter = ({ onSavePair }) => {
         console.error("Error fetching:", err);
         setRate(null);
       }
-    }, 800); // ⏳ only fetch 800 ms after last change
+    }, 800);
 
     return () => clearTimeout(timeoutId); // 🧹 clean up on rerender
   }, [leftCurrency, rightCurrency]);
@@ -124,16 +132,13 @@ const Converter = ({ onSavePair }) => {
   };
 
   return (
-    <>
-      <h1>Compare Currency Instantly!</h1>
-
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 80px 1fr" }} // creates three columns
-      >
+    <div className="converter">
+      <h1 className="converter-title">Compare Currency Instantly!</h1>
+      <div className="converter-container">
         {/* LEFT CARD */}
-        <div style={{ background: "grey" }}>
-          {/* <label htmlFor="currency"></label> */}
+        <div className="converter-card">
           <select
+            className="dropdown-selection"
             id="currency"
             value={leftCurrency}
             onChange={(e) => {
@@ -147,7 +152,7 @@ const Converter = ({ onSavePair }) => {
           </select>
 
           {/* LEFT INPUT BOX */}
-          <div>
+          <div className="input-box">
             <input
               type="number"
               min="0"
@@ -161,31 +166,17 @@ const Converter = ({ onSavePair }) => {
             {rightCurrency.toUpperCase()}
           </p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+
+        <div className="swap">
           {/* SWAP BUTTON */}
-          <button
-            onClick={handleSwap}
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              display: "flex", //use flex inside the button
-              justifyContent: "center", //centre horizontally
-              alignItems: "center", //centre vertically
-            }}
-          >
+          <button onClick={handleSwap} className="swap-btn">
             ⇄
           </button>
         </div>
         {/* RIGHT CARD */}
-        <div style={{ background: "grey" }}>
+        <div className="converter-card">
           <select
+            className="dropdown-selection"
             id="currency"
             value={rightCurrency}
             onChange={(e) => {
@@ -199,7 +190,7 @@ const Converter = ({ onSavePair }) => {
           </select>
 
           {/* RIGHT INPUT BOX */}
-          <div>
+          <div className="input-box">
             <input
               type="number"
               min="0"
@@ -207,7 +198,6 @@ const Converter = ({ onSavePair }) => {
               onChange={onRightChange} //right input
             />
           </div>
-
           <p>
             1 {rightCurrency.toUpperCase()} ={" "}
             {rate && rate !== 0 ? (1 / rate).toFixed(4) : "..."}{" "}
@@ -215,12 +205,11 @@ const Converter = ({ onSavePair }) => {
           </p>
         </div>
       </div>
-      <div style={{ marginTop: "20px", textAlign: "right" }}>
+      <div className="save-btn">
         <button onClick={handleSave}>Save Pair as Favourite!</button>
         {message && <p>{message}</p>}
       </div>
-      {/* <ExchangeRateTrend /> */}
-    </>
+    </div>
   );
 };
 
