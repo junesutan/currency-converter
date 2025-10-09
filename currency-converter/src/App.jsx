@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import "./App.css";
@@ -11,6 +11,12 @@ import FavouritePairs from "./components/FavouritePairs";
 import Newsfeed from "./components/Newsfeed";
 
 const App = () => {
+  const [favPairs, setFavPairs] = useState([]);
+
+  const handleFavPair = (pair) => {
+    setFavPairs((prev) => [...prev, pair]);
+  };
+
   return (
     <>
       <BrowserRouter>
@@ -19,7 +25,7 @@ const App = () => {
           <Route path="/" element={<Converter />} />
           <Route path="/favourite-pairs" element={<FavouritePairs />} />
           <Route path="/exchange-rate-trend" element={<ExchangeRateTrend />} />
-          <Route path="/exchange-rate-news" element={<Newsfeed />} />
+          <Route path="/newsfeed" element={<Newsfeed />} />
         </Routes>
       </BrowserRouter>
     </>

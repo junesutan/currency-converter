@@ -6,6 +6,9 @@ const Newsfeed = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     console.log("NEWS_API_KEY:", NEWS_API_KEY);
     async function fetchNewsfeed() {
@@ -13,7 +16,7 @@ const Newsfeed = () => {
         setLoading(true);
         setError(null);
         const res = await fetch(
-          `https://newsapi.org/v2/everything?q=exchange rate OR forex OR currency&language =en&apiKey=${NEWS_API_KEY}`
+          `https://newsapi.org/v2/everything?q=exchange rate OR forex OR currency&language=en&apiKey=${NEWS_API_KEY}`
         );
         const json = await res.json();
         setData(json.articles);
@@ -32,61 +35,29 @@ const Newsfeed = () => {
   return (
     <div>
       <h1>Exchange Rate News Here!</h1>
-      <ul>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         {data.map((article, idx) => (
-          <li key={idx}>
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              flexDirection: "column",
+              borderRadius: "10px",
+            }}
+          >
             <a href={article.url} target="_blank">
               {article.title}
             </a>
-          </li>
+            <img
+              src={article.urlToImage}
+              style={{ height: "180px", objectFit: "cover" }}
+            />
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
 
 export default Newsfeed;
-
-// const ExchangeRateNews = () => {
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     async function fetchNewsData() {
-//       try {
-//         setLoading(true);
-//         setError(null);
-//         const res = await fetch(
-//           `https://newsapi.org/v2/everything?q=exchange rate OR forex OR currency&language =en&apiKey=${NEWS_API_KEY}`
-//         );
-//         const newsData = await res.json();
-//       } catch (err) {
-//         setError(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     fetchNewsData();
-//   }, []);
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p>Error: {error.message}</p>;
-
-//   return (
-//     <div>
-//       <h1>Exchange Rate News Here!</h1>
-//       <ul>
-//         {newsData.map((article, idx) => (
-//           <li key={idx}>
-//             <a href={article.url} target="_blank">
-//               {article.title}
-//             </a>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default ExchangeRateNews;
