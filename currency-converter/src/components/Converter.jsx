@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
+import { savePairToAirtable } from "./api/airtable";
+
 const APIKEY = import.meta.env.VITE_API_KEY;
 
 const Converter = ({ onSavePair }) => {
@@ -40,14 +42,16 @@ const Converter = ({ onSavePair }) => {
       timeStyle: "short",
     });
 
-    onSavePair({
-      //calling the function which is passed down from parent, passes the object up to the parent
-      //info sent up to parent, parent write it down
+    const newPair = {
       from: leftCurrency,
       to: rightCurrency,
-      rate,
+      rate: parseFloat(rate.toFixed(4)),
       dateSaved: formattedDate,
-    });
+    };
+
+    if (onSavePair) onSavePair(newPair);
+
+    savePairToAirtable(newPair);
 
     setMessage(
       `Saved ${leftCurrency.toUpperCase()} → ${rightCurrency.toUpperCase()}`
@@ -130,6 +134,8 @@ const Converter = ({ onSavePair }) => {
       setLeftValue(""); // clear right box when left is empty
     }
   };
+
+  if (!leftCurrency || !rightCurrency) return null;
 
   return (
     <div className="converter">

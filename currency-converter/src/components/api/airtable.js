@@ -39,9 +39,11 @@ export async function savePairToAirtable(pair) {
       }),
     });
     const data = await res.json();
-    console.log("✅ Saved to Airtable:", data);
+    console.log("🔍 Response status:", res.status);
+    console.log("🔍 Response body:", data);
+    console.log("Saved to Airtable:", data);
     return data;
   } catch (err) {
-    console.error("❌ Failed to save to Airtable:", err);
+    console.error("Failed to save to Airtable:", err);
   }
 }
