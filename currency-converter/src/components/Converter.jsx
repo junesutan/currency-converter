@@ -1,22 +1,31 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 const APIKEY = import.meta.env.VITE_API_KEY;
 // import ExchangeRateTrend from "./components/ExchangeRateTrend";
 // const DUMMY_EXCHANGE_RATE = 0.7742;
 
-const Converter = () => {
+const Converter = ({ onSavePair }) => {
   const [leftCurrency, setLeftCurrency] = useState("sgd");
   const [rightCurrency, setRightCurrency] = useState("usd");
   const [leftValue, setLeftValue] = useState("1.00");
   const [rightValue, setRightValue] = useState("");
   const [rate, setRate] = useState(null);
 
+  //HANDLE FAV PAIRS
+
+  const handleSave = () => {
+    onSavePair({ from: leftCurrency, to: rightCurrency, rate });
+  };
+
   //FETCH DATA USING EXCHANGE RATE API
 
   useEffect(() => {
+    console.log(APIKEY);
     const timeoutId = setTimeout(async () => {
       try {
         const res = await fetch(
+          `https://api.exchangerate.host/convert?access_key=${APIKEY}&from=${leftCurrency}&to=${rightCurrency}&amount=1`
+        );
+        console.log(
           `https://api.exchangerate.host/convert?access_key=${APIKEY}from=${leftCurrency}&to=${rightCurrency}&amount=1`
         );
         const data = await res.json();
@@ -165,6 +174,9 @@ const Converter = () => {
             {leftCurrency.toUpperCase()}
           </p>
         </div>
+      </div>
+      <div style={{ marginTop: "20px", textAlign: "right" }}>
+        <button onClick={handleSave}>Save Pair as Favourite!</button>
       </div>
       {/* <ExchangeRateTrend /> */}
     </>
