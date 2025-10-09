@@ -9,12 +9,43 @@ const Converter = ({ onSavePair }) => {
   const [leftValue, setLeftValue] = useState("1.00");
   const [rightValue, setRightValue] = useState("");
   const [rate, setRate] = useState(null);
+  const [message, setMessage] = useState("");
 
   //HANDLE FAV PAIRS
 
   const handleSave = () => {
-    onSavePair({ from: leftCurrency, to: rightCurrency, rate });
+    if (!rate || isNaN(rate)) {
+      setMessage("Cannot save — exchange rate is not ready yet!");
+      setTimeout(() => setMessage(""), 2500);
+      return; // stop here
+    }
+
+    if (!leftValue || parseFloat(leftValue) === 0) {
+      setMessage("Please enter a value before saving!");
+      setTimeout(() => setMessage(""), 2500);
+      return; // stop here
+    }
+
+    const now = new Date();
+    const formattedDate = now.toLocaleString("en-SG", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+
+    onSavePair({
+      from: leftCurrency,
+      to: rightCurrency,
+      rate,
+      dateSaved: formattedDate,
+    });
+
+    setMessage(
+      `✅ Saved ${leftCurrency.toUpperCase()} → ${rightCurrency.toUpperCase()}`
+    );
+    setTimeout(() => setMessage(""), 2500);
   };
+
+  //SET DATE
 
   //FETCH DATA USING EXCHANGE RATE API
 
@@ -177,6 +208,7 @@ const Converter = ({ onSavePair }) => {
       </div>
       <div style={{ marginTop: "20px", textAlign: "right" }}>
         <button onClick={handleSave}>Save Pair as Favourite!</button>
+        {message && <p>{message}</p>}
       </div>
       {/* <ExchangeRateTrend /> */}
     </>

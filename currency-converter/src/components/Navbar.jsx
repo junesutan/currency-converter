@@ -9,7 +9,7 @@ const Navbar = () => {
         <Link to="/">Convert Currencies</Link>
         <Link to="/favourite-pairs">Favourite Pairs</Link>
         <Link to="/exchange-rate-trend">Exchange Rate Trend</Link>
-        <Link to="/exchange-rate-news">Exchange Rate News</Link>
+        <Link to="/newsfeed">Newsfeed</Link>
       </ul>
     </div>
   );

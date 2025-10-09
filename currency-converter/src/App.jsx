@@ -25,7 +25,7 @@ const App = () => {
           <Route path="/" element={<Converter onSavePair={handleFavPair} />} />
           <Route
             path="/favourite-pairs"
-            element={<FavouritePairs favPairs={favPairs} />}
+            element={<FavouritePairs savedPairs={favPairs} />}
           />
           <Route path="/exchange-rate-trend" element={<ExchangeRateTrend />} />
           <Route path="/newsfeed" element={<Newsfeed />} />

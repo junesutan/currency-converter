@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 
 const Newsfeed = () => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   //pagination
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     console.log("NEWS_API_KEY:", NEWS_API_KEY);
@@ -20,6 +19,7 @@ const Newsfeed = () => {
         );
         const json = await res.json();
         setData(json.articles);
+        console.log("data", json);
       } catch (err) {
         setError(err);
       } finally {
@@ -28,6 +28,10 @@ const Newsfeed = () => {
     }
     fetchNewsfeed();
   }, []);
+
+  useEffect(() => {
+    console.log("data is: ", data);
+  }, [data]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
