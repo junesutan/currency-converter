@@ -22,8 +22,11 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Converter />} />
-          <Route path="/favourite-pairs" element={<FavouritePairs />} />
+          <Route path="/" element={<Converter onSavePair={handleFavPair} />} />
+          <Route
+            path="/favourite-pairs"
+            element={<FavouritePairs favPairs={favPairs} />}
+          />
           <Route path="/exchange-rate-trend" element={<ExchangeRateTrend />} />
           <Route path="/newsfeed" element={<Newsfeed />} />
         </Routes>
