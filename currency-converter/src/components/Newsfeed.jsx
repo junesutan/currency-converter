@@ -19,7 +19,6 @@ const Newsfeed = () => {
         );
         const json = await res.json();
         setData(json.articles);
-        console.log("data", json);
       } catch (err) {
         setError(err);
       } finally {
@@ -29,6 +28,8 @@ const Newsfeed = () => {
     fetchNewsfeed();
   }, []);
 
+  // just to check the state of data because can't check immediately after setData
+  // as state updates like setData are asynchronous i.e. don't update immediately
   useEffect(() => {
     console.log("data is: ", data);
   }, [data]);
