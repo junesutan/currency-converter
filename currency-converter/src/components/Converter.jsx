@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 const APIKEY = import.meta.env.VITE_API_KEY;
-// import ExchangeRateTrend from "./components/ExchangeRateTrend";
-// const DUMMY_EXCHANGE_RATE = 0.7742;
 
 const Converter = ({ onSavePair }) => {
   const [leftCurrency, setLeftCurrency] = useState("sgd");
@@ -12,18 +10,17 @@ const Converter = ({ onSavePair }) => {
   const [message, setMessage] = useState("");
 
   //HANDLE FAV PAIRS
-
   const handleSave = () => {
     if (!rate || isNaN(rate)) {
       setMessage("Cannot save — exchange rate is not ready yet!");
       setTimeout(() => setMessage(""), 2500);
-      return; // stop here
+      return;
     }
 
     if (!leftValue || parseFloat(leftValue) === 0) {
       setMessage("Please enter a value before saving!");
       setTimeout(() => setMessage(""), 2500);
-      return; // stop here
+      return;
     }
 
     const now = new Date();
@@ -45,7 +42,13 @@ const Converter = ({ onSavePair }) => {
     setTimeout(() => setMessage(""), 2500);
   };
 
-  //SET DATE
+  //HANDLE SWAP
+  const handleSwap = () => {
+    setLeftCurrency(rightCurrency);
+    setRightCurrency(leftCurrency);
+    setLeftValue(rightValue);
+    setRightValue(leftValue);
+  };
 
   //FETCH DATA USING EXCHANGE RATE API
 
@@ -87,17 +90,6 @@ const Converter = ({ onSavePair }) => {
 
     return () => clearTimeout(timeoutId); // 🧹 clean up on rerender
   }, [leftCurrency, rightCurrency]);
-
-  //   const res = await fetch(
-  //   "https://api.exchangerate.host/live?access_key=${APIKEY}&currencies=USD,EUR&source=SGD"
-  // );
-  //   const exchangeRateData = await res.json();
-  //   console.log(exchangeRateData);
-  //   useEffect(() => )
-
-  //   const handleChange = (event) => {
-  //     setBaseValue(event.target.value);
-  //   };
 
   //FUNCTION TO HANDLE HOW TYPING ON THE LEFT UPDATES THE TEXTBOX ON THE RIGHT
   const onLeftChange = (e) => {
@@ -169,13 +161,30 @@ const Converter = ({ onSavePair }) => {
             {rightCurrency.toUpperCase()}
           </p>
         </div>
-
-        {/* SWAP BUTTON */}
-        <div>⇄</div>
-
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {/* SWAP BUTTON */}
+          <button
+            onClick={handleSwap}
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              display: "flex", //use flex inside the button
+              justifyContent: "center", //centre horizontally
+              alignItems: "center", //centre vertically
+            }}
+          >
+            ⇄
+          </button>
+        </div>
         {/* RIGHT CARD */}
         <div style={{ background: "grey" }}>
-          {/* <label htmlFor="currency"></label> */}
           <select
             id="currency"
             value={rightCurrency}

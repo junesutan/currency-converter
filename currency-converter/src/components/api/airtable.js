@@ -16,3 +16,32 @@ export async function getSavedPairsFromAirtable() {
   const data = await res.json();
   return data.records.map((r) => r.fields);
 }
+
+export async function savePairToAirtable(pair) {
+  try {
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        records: [
+          {
+            fields: {
+              from: pair.from,
+              to: pair.to,
+              rate: pair.rate,
+              dateSaved: new Date().toLocaleString("en-SG", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }),
+            },
+          },
+        ],
+      }),
+    });
+    const data = await res.json();
+    console.log("✅ Saved to Airtable:", data);
+    return data;
+  } catch (err) {
+    console.error("❌ Failed to save to Airtable:", err);
+  }
+}
