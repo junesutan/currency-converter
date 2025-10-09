@@ -1,5 +1,5 @@
+"use client";
 const APIKEY = import.meta.env.VITE_API_KEY;
-("use client");
 import React, { useState, useEffect } from "react";
 import { mockHistoricalData } from "./mockHistoricalData";
 import {
@@ -10,63 +10,70 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 
-function MyComponent() {
+function ExchangeRateTrend() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [base, setBase] = useState("SGD");
+  const [target, setTarget] = useState("USD");
+
+  // const [stats, setStats] = useState({
+  //   maxRate: null,
+  //   minRate: null,
+  //   avgRate: null,
+  //   maxDate: null,
+  //   minDate: null,
+  // });
+
   useEffect(() => {
-    const fetchData = async () => {
+    let formattedData = [];
+    const fetchHistoricalData = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        //fetch historical data from API
+        const end = new Date();
+        const start = new Date();
+        start.setDate(end.getDate() - 30);
 
-        // const res = await fetch(
-        //   "https://api.exchangerate.host/timeframe?access_key=${APIKEY}&source=usd&currencies=sgd&start_date=2025-09-06&end_date=2025-10-06"
-        // );
-        // const json = await res.json();
+        const startDate = start.toISOString().split("T")[0];
+        const endDate = end.toISOString().split("T")[0];
 
-        // if (!json.success) {
-        //   console.log("API error", json.error);
-        //   return;
-        // }
+        const url = `https://api.frankfurter.app/${startDate}..${endDate}?from=${base}&to=${target}`;
+        const res = await fetch(url);
+        const json = await res.json();
 
-        // const result = await res.json();
-
-        const result = mockHistoricalData; // storing the result as 'result'
-
-        const formatted = Object.entries(result.quotes).map(
-          //formatting the result as an array
-          ([date, rateObj]) => ({
-            date,
-            rate: rateObj.USDSGD,
-          })
-        );
-
-        setData(formatted);
-        console.log(result);
-        console.log(formatted);
+        formattedData = Object.entries(json.rates).map(([date, rateObj]) => ({
+          date,
+          rate: rateObj[target.toUpperCase()],
+        }));
+        console.log(formattedData);
+        setData(formattedData);
       } catch (err) {
         setError(err);
         console.error("error fetching data", err);
-        const formatted = Object.entries(mockHistoricalData.quotes).map(
-          //formats object into an array of objects
-          ([date, rateObj]) => ({
-            date,
-            rate: rateObj.USDSGD,
-          })
-        );
-        setData(formatted);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    // const rates = formattedData.map((d) => d.rate);
+    // const maxRate = Math.max(...rates);
+    // const minRate = Math.min(...rates);
+    // const avgRate = (rates.reduce((a, b) => a + b, 0) / rates.length).toFixed(
+    //   4
+    // );
+
+    const maxDate = formattedData.find((d) => d.rate === maxRate)?.date;
+    const minDate = formattedData.find((d) => d.rate === minRate)?.date;
+
+    // setStats({ maxRate, minRate, avgRate, maxDate, minDate });
+    fetchHistoricalData();
+  }, [base, target]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -77,17 +84,94 @@ function MyComponent() {
   }
 
   return (
-    <div>
-      <h1>Data:</h1>
-      <div style={{ width: "300%", height: 800 }}>
-        <ResponsiveContainer>
+    <div className="trend-container">
+      <h1>Exchange Rate Summary</h1>
+      <p className="trend-subtitle">Last 30 Days</p>
+
+      {/* currency dropdowns */}
+      <div className="currency-selectors">
+        <select
+          value={base}
+          onChange={(e) => setBase(e.target.value)}
+          className="dropdown"
+        >
+          <option value="SGD" disabled={target === "SGD"}>
+            SGD
+          </option>
+          <option value="USD" disabled={target === "USD"}>
+            USD
+          </option>
+          <option value="EUR" disabled={target === "EUR"}>
+            EUR
+          </option>
+        </select>
+
+        <span className="arrow">→</span>
+
+        <select
+          value={target}
+          onChange={(e) => setTarget(e.target.value)}
+          className="dropdown"
+        >
+          <option value="SGD" disabled={base === "SGD"}>
+            SGD
+          </option>
+          <option value="USD" disabled={base === "USD"}>
+            USD
+          </option>
+          <option value="EUR" disabled={base === "EUR"}>
+            EUR
+          </option>
+        </select>
+      </div>
+      {/* <p className="trend-summary">
+        Over the last 30 days, {base.toUpperCase()} reached a high of{" "}
+        <strong>
+          {stats.maxRate?.toFixed(4)} {target.toUpperCase()}
+        </strong>{" "}
+        on <strong>{stats.maxDate}</strong> and a low of{" "}
+        <strong>
+          {stats.minRate?.toFixed(4)} {target.toUpperCase()}
+        </strong>{" "}
+        on <strong>{stats.minDate}</strong>. The average exchange rate during
+        this period was{" "}
+        <strong>
+          {stats.avgRate} {target.toUpperCase()}
+        </strong>
+        .
+      </p> */}
+      <div
+        className="trend-container"
+        style={{
+          width: "100%",
+          maxWidth: "800px",
+          margin: "30px auto 0",
+          height: 350,
+        }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+            <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+            <YAxis
+              tickFormatter={(value) => value.toFixed(3)}
+              tick={{ fontSize: 12 }}
+              domain={["dataMin - 0.005", "dataMax + 0.005"]}
+            />
+            <Tooltip
+              formatter={(value) => [
+                `${value.toFixed(4)} ${target}`,
+                "Exchange Rate",
+              ]}
+            />
+            <Legend verticalAlign="top" height={36} />
             <Line
               type="monotone"
               dataKey="rate"
-              stroke="#8884d8"
+              stroke="#2c3e50"
               strokeWidth={2}
               dot={false}
+              name={`${base} → ${target}`}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -96,4 +180,4 @@ function MyComponent() {
   );
 }
 
-export default MyComponent;
+export default ExchangeRateTrend;

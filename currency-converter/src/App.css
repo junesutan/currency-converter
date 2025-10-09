@@ -52,6 +52,18 @@ body {
   border-style: solid;
 }
 
+.trend-container {
+  width: 90vw;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .trend-container {
+    width: 95vw;
+  }
+}
+
 .converter-card select,
 .converter-card input {
   width: 100%;
