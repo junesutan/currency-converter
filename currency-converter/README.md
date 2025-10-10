@@ -1,3 +1,6 @@
+![screenshot](public/app-screenshot.png)
+
+
 ##5.2 App Name & Description
 Currency Converter is a React-based web application that allows users to instantly compare exchange rates between  currencies and visualize historical trends.
 
