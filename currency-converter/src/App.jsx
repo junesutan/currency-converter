@@ -10,12 +10,19 @@ import Converter from "./components/Converter";
 import ExchangeRateTrend from "./components/ExchangeRateTrend";
 import FavouritePairs from "./components/FavouritePairs";
 import Newsfeed from "./components/Newsfeed";
-
+import { savePairToAirtable } from "./components/api/airtable";
 const App = () => {
   const [favPairs, setFavPairs] = useState([]);
 
-  const handleFavPair = (pair) => {
-    setFavPairs((prev) => [...prev, pair]);
+  const handleFavPair = async (pair) => {
+    console.log("⭐ Saving to Airtable:", pair);
+    try {
+      await savePairToAirtable(pair); // send to airtable
+      setFavPairs((prev) => [...prev, pair]); // update UI
+      console.log("Successfully saved!");
+    } catch (err) {
+      console.error("Failed to save:", err);
+    }
   };
 
   return (
@@ -23,7 +30,10 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Converter onSavePair={handleFavPair} />} />
+          <Route
+            path="/"
+            element={<Converter onSavePair={savePairToAirtable} />}
+          />
           <Route
             path="/favourite-pairs"
             element={<FavouritePairs savedPairs={favPairs} />}

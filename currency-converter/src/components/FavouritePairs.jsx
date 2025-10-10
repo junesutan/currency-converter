@@ -51,17 +51,15 @@ const FavouritePairs = ({ savedPairs = [] }) => {
             if (date) {
               try {
                 const parsed = new Date(date);
-                const day = parsed.getDate();
-                const month = parsed.toLocaleString("en-GB", {
+                const formattedDate = parsed.toLocaleString("en-SG", {
+                  day: "2-digit",
                   month: "short",
-                });
-                const year = parsed.getFullYear();
-                const time = parsed.toLocaleTimeString("en-SG", {
+                  year: "numeric",
                   hour: "numeric",
                   minute: "2-digit",
                   hour12: true,
+                  timeZone: "Asia/Singapore",
                 });
-                date = `${day} ${month} ${year}, ${time}`;
               } catch {
                 date = date;
               }

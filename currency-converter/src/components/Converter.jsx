@@ -7,8 +7,8 @@ const APIKEY = import.meta.env.VITE_API_KEY;
 const Converter = ({ onSavePair }) => {
   //receives a prop pass from App.jsx to save pairs
 
-  const [leftCurrency, setLeftCurrency] = useState("sgd"); //tracks currency
-  const [rightCurrency, setRightCurrency] = useState("usd");
+  const [leftCurrency, setLeftCurrency] = useState("SGD"); //tracks currency
+  const [rightCurrency, setRightCurrency] = useState("USD");
 
   const [leftValue, setLeftValue] = useState("1.00"); //tracks amount
   const [rightValue, setRightValue] = useState("");
@@ -152,9 +152,15 @@ const Converter = ({ onSavePair }) => {
               setLeftCurrency(e.target.value);
             }}
           >
-            <option value="usd">USD</option>
-            <option value="eur">EUR</option>
-            <option value="sgd">SGD</option>
+            <option value="SGD" disabled={rightCurrency === "SGD"}>
+              SGD
+            </option>
+            <option value="EUR" disabled={rightCurrency === "EUR"}>
+              EUR
+            </option>
+            <option value="USD" disabled={rightCurrency === "USD"}>
+              USD
+            </option>
           </select>
 
           {/* LEFT INPUT BOX */}
@@ -190,9 +196,15 @@ const Converter = ({ onSavePair }) => {
               console.log("right currency has been set to:", e.target.value);
             }} //right currency
           >
-            <option value="usd">USD</option>
-            <option value="eur">EUR</option>
-            <option value="sgd">SGD</option>
+            <option value="SGD" disabled={leftCurrency === "SGD"}>
+              SGD
+            </option>
+            <option value="EUR" disabled={leftCurrency === "EUR"}>
+              EUR
+            </option>
+            <option value="USD" disabled={leftCurrency === "USD"}>
+              USD
+            </option>
           </select>
 
           {/* RIGHT INPUT BOX */}

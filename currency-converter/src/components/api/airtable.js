@@ -11,6 +11,20 @@ const headers = {
   "Content-Type": "application/json",
 };
 
+//format the date
+function formatDateToSingapore(dateInput) {
+  const parsed = new Date(dateInput);
+  return parsed.toLocaleString("en-SG", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Singapore",
+  });
+}
+
 export async function getSavedPairsFromAirtable() {
   const res = await fetch(BASE_URL, { headers });
   const data = await res.json();
@@ -18,7 +32,10 @@ export async function getSavedPairsFromAirtable() {
 }
 
 export async function savePairToAirtable(pair) {
+  const formattedDate = formatDateToSingapore(new Date());
   try {
+    const formattedDate = formatDateToSingapore(new Date());
+
     const res = await fetch(BASE_URL, {
       method: "POST",
       headers,
@@ -29,18 +46,15 @@ export async function savePairToAirtable(pair) {
               from: pair.from,
               to: pair.to,
               rate: pair.rate,
-              dateSaved: new Date().toLocaleString("en-SG", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              }),
+              dateSaved: formattedDate, // readable format
             },
           },
         ],
       }),
     });
     const data = await res.json();
-    console.log("🔍 Response status:", res.status);
-    console.log("🔍 Response body:", data);
+    console.log("response status:", res.status);
+    console.log("response body:", data);
     console.log("Saved to Airtable:", data);
     return data;
   } catch (err) {
