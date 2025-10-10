@@ -1,4 +1,4 @@
-![screenshot](public/app-screenshot.png)
+![screenshot](./currency-converter/public/app-screenshot.png)
 
 
 ##5.2 App Name & Description
